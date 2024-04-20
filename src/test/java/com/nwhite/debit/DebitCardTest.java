@@ -60,7 +60,7 @@ public class DebitCardTest {
 
     @DisplayName("JUnit test for cashback debit card feature")
     @Test
-    public void givenCashbackDebitCardObject_whenDeposit_thenCashback () {
+    public void givenCashbackDebitCardObject_whenWithdraw_thenCashback () {
         // given
         cashbackDebitCard.deposit(BigDecimal.valueOf(5000));
 

@@ -139,7 +139,7 @@ public class CreditCardTest {
 
     @DisplayName("JUnit test for cashback credit card feature")
     @Test
-    public void givenCashbackCreditCardObject_whenDeposit_thenCashback () {
+    public void givenCashbackCreditCardObject_whenWithdraw_thenCashback () {
         // given
 
         // when
