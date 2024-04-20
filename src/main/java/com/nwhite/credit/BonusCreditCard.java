@@ -1,8 +1,8 @@
-package com.nwhite;
+package com.nwhite.credit;
 
 import java.math.BigDecimal;
 
-public class BonusCreditCard extends CreditCard {
+public final class BonusCreditCard extends CreditCard {
     private BigDecimal bonus;
 
     public BonusCreditCard(BigDecimal initialCreditLimit) {
@@ -12,16 +12,26 @@ public class BonusCreditCard extends CreditCard {
 
     @Override
     public Boolean withdraw(BigDecimal amount) {
-        if (amount.compareTo(balance) <= 0) {
-            balance = balance.subtract(amount);
-            bonus = bonus.add(amount.multiply(BigDecimal.valueOf(0.01)));
-        } else if (amount.compareTo(balance.add(creditLimit)) <= 0) {
-            BigDecimal remainingAmount = amount.subtract(balance);
-            balance = BigDecimal.ZERO;
-            creditLimit = creditLimit.subtract(remainingAmount);
+        if (super.withdraw(amount)) {
+            handleBonus(amount);
+            return true;
         } else {
-            return false;
+            throw new RuntimeException("Недостаточно средств на балансе");
         }
-        return true;
+    }
+
+    @Override
+    protected void handleBonus(BigDecimal amount) {
+        bonus = bonus.add(amount.multiply(BigDecimal.valueOf(0.01)));
+    }
+
+    public BigDecimal getBonus() {
+        return this.bonus;
+    }
+
+    @Override
+    public void getFundsInfo() {
+        super.getFundsInfo();
+        System.out.println("Бонус: " + this.bonus);
     }
 }

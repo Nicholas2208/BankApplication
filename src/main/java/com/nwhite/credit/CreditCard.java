@@ -1,10 +1,12 @@
-package com.nwhite;
+package com.nwhite.credit;
+
+import com.nwhite.BankCard;
 
 import java.math.BigDecimal;
 
-public class CreditCard extends BankCard {
+public abstract class CreditCard extends BankCard {
     protected BigDecimal creditLimit;
-    private final BigDecimal initialCreditLimit;
+    protected final BigDecimal initialCreditLimit;
 
     public CreditCard(BigDecimal initialCreditLimit) {
         super(BigDecimal.ZERO);
@@ -13,14 +15,14 @@ public class CreditCard extends BankCard {
 
     @Override
     public Boolean withdraw(BigDecimal amount) {
-        if (amount.compareTo(balance) <= 0) {
+        if (balance.compareTo(amount) >= 0) {
             balance = balance.subtract(amount);
         } else if (amount.compareTo(balance.add(creditLimit)) <= 0) {
             BigDecimal remainingAmount = amount.subtract(balance);
             balance = BigDecimal.ZERO;
             creditLimit = creditLimit.subtract(remainingAmount);
         } else {
-            return false;
+            throw new RuntimeException("Недостаточно средств на балансе");
         }
         return true;
     }
@@ -36,13 +38,17 @@ public class CreditCard extends BankCard {
                 balance = balance.add(amount.subtract(difference));
             } else {
                 creditLimit = creditLimit.add(amount);
-               }
-          }
+            }
+        }
     }
 
     @Override
     public void getFundsInfo() {
-        System.out.println("Баланс: " + balance);
+        super.getFundsInfo();
         System.out.println("Кредитный лимит: " + creditLimit);
+    }
+
+    public BigDecimal getCreditLimit() {
+        return creditLimit;
     }
 }

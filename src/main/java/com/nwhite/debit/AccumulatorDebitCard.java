@@ -1,8 +1,8 @@
-package com.nwhite;
+package com.nwhite.debit;
 
 import java.math.BigDecimal;
 
-public class AccumulatorDebitCard extends DebitCard {
+public final class AccumulatorDebitCard extends DebitCard {
     private BigDecimal accumulator;
 
     public AccumulatorDebitCard(BigDecimal balance) {
@@ -11,14 +11,25 @@ public class AccumulatorDebitCard extends DebitCard {
     }
 
     @Override
-    public Boolean withdraw(BigDecimal amount) {
-        return null;
+    public void deposit(BigDecimal amount) {
+        super.deposit(amount);
+        handleBonus(amount);
+    }
+
+    /**
+     * Накопление в размере 0.005% от суммы пополнений.
+     *
+     * @param amount сумма пополнения
+     */
+    @Override
+    protected void handleBonus(BigDecimal amount) {
+        accumulator = accumulator.add(amount.multiply(BigDecimal.valueOf(0.00005)));
     }
 
     @Override
-    public void deposit(BigDecimal amount) {
-        balance = balance.add(amount);
-        accumulator = accumulator.add(amount.multiply(BigDecimal.valueOf(0.00005)));
+    public void getFundsInfo() {
+        super.getFundsInfo();
+        System.out.println("Накопитель: " + this.getAccumulator());
     }
 
     public BigDecimal getAccumulator() {

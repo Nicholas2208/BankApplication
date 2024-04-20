@@ -1,8 +1,10 @@
-package com.nwhite;
+package com.nwhite.debit;
+
+import com.nwhite.exception.InsufficientFundsException;
 
 import java.math.BigDecimal;
 
-public class BonusDebitCard extends DebitCard {
+public final class BonusDebitCard extends DebitCard {
     private BigDecimal bonus;
 
     public BonusDebitCard(BigDecimal balance) {
@@ -12,12 +14,31 @@ public class BonusDebitCard extends DebitCard {
 
     @Override
     public Boolean withdraw(BigDecimal amount) {
-        if (amount.compareTo(balance) >= 0) {
-            balance = balance.subtract(amount);
-            bonus = bonus.add(amount.multiply(BigDecimal.valueOf(0.01)));
+        if (super.withdraw(amount)) {
+            handleBonus(amount);
             return true;
         } else {
-            return false;
+            throw new InsufficientFundsException("Недостаточно средств на балансе");
         }
+    }
+
+    /**
+     * Увеличивает бонусные баллы на 1% от суммы покупки.
+     *
+     * @param amount сумма покупки
+     */
+    @Override
+    protected void handleBonus(BigDecimal amount) {
+        bonus = bonus.add(amount.multiply(BigDecimal.valueOf(0.01)));
+    }
+
+    @Override
+    public void getFundsInfo() {
+        super.getFundsInfo();
+        System.out.println("Бонус: " + this.getBonus());
+    }
+
+    public BigDecimal getBonus() {
+        return this.bonus;
     }
 }
